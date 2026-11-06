@@ -2,10 +2,13 @@ import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 
+import SmoothScroll from "@/components/motion/SmoothScroll";
 import FloatingActions from "@/components/ui/FloatingActions";
 import "./globals.css";
 
-// One typeface for the whole page, hero and sections alike.
+// The site's typeface, shared by the hero and the sections below it (the
+// reference design sets everything in one geometric sans). Everything reads
+// --font-body.
 const poppins = Poppins({
   variable: "--font-body",
   subsets: ["latin"],
@@ -14,7 +17,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "TM Manifesto | A New Way Of Living",
+  title: "Tropical Manifesto | A New Way Of Living",
   description: "Thoughtfully designed spaces that bring nature closer to you.",
 };
 
@@ -28,6 +31,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={poppins.variable}>
       <body>
+        <SmoothScroll />
         {children}
         <FloatingActions />
       </body>

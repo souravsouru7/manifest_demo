@@ -27,6 +27,10 @@
 # rendered hero source footage; the web assets in public/hero are committed
 /*.mp4
 
+# 4K source package for the sections (~125 MB). Its web derivatives are in
+# public/tm/sections; regenerate them with `npm run sections:assets`.
+/TM_Manifesto_NonHero_Assets_Package/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

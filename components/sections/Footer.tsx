@@ -1,14 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type FormEvent } from "react";
-import { ArrowRight } from "lucide-react";
+import { useRef } from "react";
+
+import { gsap, useGSAP } from "@/components/motion/gsap";
 
 const QUICK_LINKS = [
   { label: "Projects", href: "#projects" },
+  { label: "Studio", href: "#services" },
   { label: "About Us", href: "#about" },
-  { label: "Blog", href: "#" },
   { label: "Contact", href: "#contact" },
+];
+
+const SERVICE_LINKS = [
+  "Residential Homes",
+  "Community Spaces",
+  "Interior Design",
+  "Sustainable Development",
 ];
 
 // Lucide no longer ships brand icons, so these three are drawn here.
@@ -43,79 +51,61 @@ const SOCIALS = [
   },
 ];
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+/**
+ * FOOTER — deep navy under a layered mountain silhouette and wave edge.
+ * Uses the brand's own logo file; nothing is redrawn.
+ */
 export default function Footer() {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "invalid" | "done">("idle");
+  const root = useRef<HTMLElement>(null);
 
-  const onSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    // No mailing-list service is connected yet: nothing is sent anywhere.
-    if (!EMAIL_PATTERN.test(email.trim())) {
-      setStatus("invalid");
-      return;
-    }
-    setStatus("done");
-    setEmail("");
-  };
+  useGSAP(
+    () => {
+      const media = gsap.matchMedia(root);
+      media.add("(prefers-reduced-motion: no-preference)", () => {
+        const scrub = { trigger: root.current, start: "top bottom", end: "bottom bottom", scrub: true };
+        gsap.fromTo(".tm-footer-mist-back", { yPercent: 30 }, { yPercent: 0, ease: "none", scrollTrigger: scrub });
+        gsap.fromTo(".tm-footer-mist-front", { yPercent: 45 }, { yPercent: 0, ease: "none", scrollTrigger: scrub });
+        gsap.fromTo(".tm-footer-wave", { xPercent: -3 }, { xPercent: 0, ease: "none", scrollTrigger: scrub });
+
+        gsap.from(".tm-footer-col", {
+          y: 34,
+          autoAlpha: 0,
+          duration: 0.9,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".tm-footer-grid", start: "top 92%" },
+        });
+        gsap.from(".tm-footer-bottom", {
+          autoAlpha: 0,
+          duration: 1,
+          delay: 0.4,
+          scrollTrigger: { trigger: ".tm-footer-grid", start: "top 92%" },
+        });
+      });
+    },
+    { scope: root },
+  );
 
   return (
-    <footer id="contact" className="tm-footer">
-      <svg aria-hidden className="tm-footer-wave" viewBox="0 0 1024 51" preserveAspectRatio="none">
-        <path d="M0 51C4 28 18 16 52 12C130 4 190 14 270 16C360 18 420 6 500 2C590 -2 660 12 760 12C830 12 890 2 960 8C1000 12 1018 26 1024 51Z" />
-      </svg>
-      <Image
-        loading="eager"
-        src="/tm/08-footer-mountain-atmosphere.png"
-        alt=""
-        width={1024}
-        height={146}
-        className="tm-footer-mountains"
-      />
-      <Image loading="eager" src="/tm/12-leaf-overlay-footer-left.png" alt="" width={260} height={216} className="tm-leaf tm-leaf-footer-left" />
-      <Image loading="eager" src="/tm/13-leaf-overlay-footer-right.png" alt="" width={174} height={166} className="tm-leaf tm-leaf-footer-right" />
+    <footer id="contact" ref={root} className="tm-footer">
+      <div aria-hidden className="tm-footer-scene">
+        <Image src="/tm/sections/mist-panorama.webp" alt="" width={2400} height={864} sizes="100vw" className="tm-footer-mist-back" />
+        <Image src="/tm/sections/mist-panorama.webp" alt="" width={2400} height={864} sizes="100vw" className="tm-footer-mist-front" />
+        <svg className="tm-footer-wave" viewBox="0 0 1440 90" preserveAspectRatio="none">
+          <path d="M0 90V52C120 30 240 18 380 30C520 42 620 70 760 66C900 62 1000 30 1140 24C1260 19 1360 36 1440 48V90Z" />
+        </svg>
+      </div>
 
-      <div className="tm-footer-inner">
+      <div className="tm-shell tm-footer-inner">
         <div className="tm-footer-grid">
-          <div className="tm-footer-brand">
-            <p className="tm-footer-logo">
-              tm<span>.</span>
-            </p>
-            <p className="tm-footer-tagline">Live the Manifesto</p>
+          <div className="tm-footer-col tm-footer-brand">
+            <a href="#hero" aria-label="Tropical Manifesto, back to top">
+              <Image src="/tm/logo.png" alt="Tropical Manifesto" width={449} height={448} className="tm-footer-logo" />
+            </a>
+            <p>Live the Manifesto</p>
           </div>
 
-          <div className="tm-footer-news">
-            <h2>Stay Connected</h2>
-            <p>Get the latest updates on our new projects and offers.</p>
-            <form onSubmit={onSubmit} noValidate className="tm-footer-form">
-              <label htmlFor="tm-email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="tm-email"
-                type="email"
-                autoComplete="email"
-                placeholder="Enter your email address"
-                value={email}
-                aria-invalid={status === "invalid"}
-                aria-describedby="tm-email-status"
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                  if (status !== "idle") setStatus("idle");
-                }}
-              />
-              <button type="submit">
-                Subscribe <ArrowRight aria-hidden />
-              </button>
-            </form>
-            <p id="tm-email-status" role="status" className="tm-footer-status">
-              {status === "invalid" && "Please enter a valid email address."}
-              {status === "done" && "Thank you. We'll keep you posted."}
-            </p>
-          </div>
-
-          <nav aria-label="Quick links" className="tm-footer-links">
+          <nav aria-label="Quick links" className="tm-footer-col">
             <h2>Quick Links</h2>
             <ul>
               {QUICK_LINKS.map((link) => (
@@ -126,7 +116,18 @@ export default function Footer() {
             </ul>
           </nav>
 
-          <div className="tm-footer-social">
+          <nav aria-label="Our services" className="tm-footer-col">
+            <h2>Our Services</h2>
+            <ul>
+              {SERVICE_LINKS.map((label) => (
+                <li key={label}>
+                  <a href="#services">{label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="tm-footer-col tm-footer-social">
             <h2>Follow Us</h2>
             <ul>
               {SOCIALS.map((social) => (
@@ -151,7 +152,7 @@ export default function Footer() {
         </div>
 
         <div className="tm-footer-bottom">
-          <p>© 2025 TM Manifesto. All rights reserved.</p>
+          <p>&copy; 2025 Tropical Manifesto. All rights reserved.</p>
           <p>
             <a href="#">Privacy Policy</a>
             <span aria-hidden>|</span>

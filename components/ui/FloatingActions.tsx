@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { ArrowUp, Mail, Phone } from "lucide-react";
 
+import { getLenis } from "@/components/motion/lenis";
+
 import "./floating-actions.css";
 
 /**
@@ -85,7 +87,12 @@ export default function FloatingActions() {
         aria-label="Back to top"
         data-shown={showTop}
         className="fa-button fa-top"
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        onClick={() => {
+          // Null under reduced motion, and before SmoothScroll mounts.
+          const lenis = getLenis();
+          if (lenis) lenis.scrollTo(0, { duration: 1.4 });
+          else window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
       >
         <ArrowUp size={20} strokeWidth={2} aria-hidden />
       </button>
@@ -95,15 +102,10 @@ export default function FloatingActions() {
           <li key={label}>
             <a
               href={href}
-              /* The visible label is hidden on phones to save width, which would
-                 otherwise leave the link with no accessible name at all. */
               aria-label={label}
               className={`fa-channel ${tone}`}
               {...(external ? { target: "_blank", rel: "noreferrer noopener" } : {})}
             >
-              <span aria-hidden className="fa-channel-label">
-                {label}
-              </span>
               <span className="fa-channel-icon">{icon}</span>
             </a>
           </li>
