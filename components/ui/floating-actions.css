@@ -75,8 +75,10 @@
 .fa-channel {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.5rem 0.55rem 0.5rem 1rem;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0;
   border-radius: 999px;
   color: #071b2c;
   background: rgba(255, 255, 255, 0.95);
@@ -128,13 +130,6 @@
   outline-offset: 3px;
 }
 
-.fa-channel-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-}
-
 .fa-channel-icon {
   display: inline-flex;
   align-items: center;
@@ -166,14 +161,9 @@
     height: 3rem;
   }
 
-  /* Labels cost more width than they are worth next to a thumb; the icons
-     carry it, with the accessible name left on the link. */
-  .fa-channel-label {
-    display: none;
-  }
-
   .fa-channel {
-    padding: 0.35rem;
+    width: 3rem;
+    height: 3rem;
   }
 }
 

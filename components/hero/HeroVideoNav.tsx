@@ -51,7 +51,11 @@ export default function HeroVideoNav({ solid }: HeroVideoNavProps) {
         aria-label="Main"
         className="seq-gutter mx-auto flex h-20 max-w-[1600px] items-center justify-between max-[500px]:h-16"
       >
-        <a href="#hero" aria-label="TM Manifesto home" className={`rounded-sm ${FOCUS_RING}`}>
+        <a
+          href="#hero"
+          aria-label="Tropical Manifesto home"
+          className={`flex items-center gap-3 rounded-sm max-[500px]:gap-2.5 ${FOCUS_RING}`}
+        >
           <Image
             src={LOGO_SRC}
             alt=""
@@ -60,6 +64,14 @@ export default function HeroVideoNav({ solid }: HeroVideoNavProps) {
             preload
             className="h-11 w-11 max-[500px]:h-[38px] max-[500px]:w-[38px]"
           />
+          {/* The wordmark is live text, not an image. */}
+          <span
+            aria-hidden
+            className="flex flex-col text-[1.15rem] leading-[1.02] font-bold tracking-[-0.02em] max-[500px]:text-[0.95rem]"
+          >
+            <span>Tropical</span>
+            <span>Manifesto</span>
+          </span>
         </a>
 
         {/* Desktop */}
