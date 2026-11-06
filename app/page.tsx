@@ -1,10 +1,10 @@
-import HeroSequence from "@/components/hero/HeroSequence";
+import HeroVideo from "@/components/hero/HeroVideo";
 import LandingSections from "@/components/sections/LandingSections";
 
 export default function Home() {
   return (
     <main>
-      <HeroSequence />
+      <HeroVideo />
       <LandingSections />
     </main>
   );

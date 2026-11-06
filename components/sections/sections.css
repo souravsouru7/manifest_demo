@@ -5,9 +5,16 @@
  * measured from the 1024-wide reference. The layout therefore keeps the
  * reference's proportions at any desktop width. Below 1024px --u is simply 1px
  * and the layouts reflow (see the bottom of this file).
+ *
+ * The cap is what decides where the design stops growing and starts sitting in
+ * the middle of the screen. At 1440 the panels froze at ~1360px, which on a
+ * 1920 monitor left 280px of empty sky down each side under a full-bleed hero.
+ * 1920 keeps them filling the width on the monitors people actually use;
+ * uncapping entirely would track any width but puts 80px headings on an
+ * ultrawide.
  */
 .tm-root {
-  --u: calc(min(100vw, 1440px) / 1024);
+  --u: calc(min(100vw, 1920px) / 1024);
   --tm-yellow: #ffc400;
   --tm-yellow-2: #f5b900;
   --tm-navy: #071b2c;
@@ -20,10 +27,10 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  /* Overlaps the hero so the sky, clouds and mountains rise up as soon as the hero's
-     sky wipe is solid at the bottom of the screen. Without this there is a full
-     screen of plain sky between the two. */
-  margin-top: -38vh;
+  /* No overlap: the hero is one screen tall and ends on --hero-next-bg, which is
+     the colour this gradient starts on. (This used to pull up -38vh to meet the
+     old scroll hero's sky wipe, which would now swallow the hero's lower third.) */
+  margin-top: 0;
   padding-top: calc(var(--u) * 192);
   color: var(--tm-text);
   font-family: var(--font-body), system-ui, sans-serif;
@@ -137,6 +144,86 @@
 .tm-reveal.is-shown {
   opacity: 1;
   transform: none;
+}
+
+/* ---------- Staggered entry ----------
+ * The panel above carries the whole card in; these bring its contents in behind
+ * it, one after another, so a row of three reads as 1-2-3 rather than snapping
+ * into place as a block.
+ *
+ * These animate `translate`, NOT `transform`, and that is deliberate. The cards
+ * already use `transform` for their hover lift (see .tm-project:hover below).
+ * An animation with `both`/`forwards` on `transform` keeps its final value
+ * applied, and animations outrank ordinary declarations in the cascade — so
+ * sharing the property would silently kill every hover on the page the moment
+ * a card finished revealing. `translate` is a separate property, so the two
+ * compose instead of fighting.
+ */
+@keyframes tm-enter {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+  to {
+    opacity: 1;
+    translate: none;
+  }
+}
+
+.tm-reveal .tm-intro > *,
+.tm-reveal .tm-experience-copy > *,
+.tm-reveal .tm-project,
+.tm-reveal .tm-feature,
+.tm-reveal .tm-experience-features > li {
+  opacity: 0;
+}
+
+.tm-reveal.is-shown .tm-intro > *,
+.tm-reveal.is-shown .tm-experience-copy > *,
+.tm-reveal.is-shown .tm-project,
+.tm-reveal.is-shown .tm-feature,
+.tm-reveal.is-shown .tm-experience-features > li {
+  animation: tm-enter 0.62s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* Starts after the panel itself is most of the way up. */
+  animation-delay: calc(0.18s + var(--tm-i, 0) * 0.09s);
+}
+
+/* The copy column leads, the cards follow it in. */
+.tm-reveal .tm-intro > *:nth-child(2),
+.tm-reveal .tm-experience-copy > *:nth-child(2) {
+  --tm-i: 1;
+}
+
+.tm-reveal .tm-intro > *:nth-child(3),
+.tm-reveal .tm-experience-copy > *:nth-child(3) {
+  --tm-i: 2;
+}
+
+.tm-reveal .tm-intro > *:nth-child(4),
+.tm-reveal .tm-experience-copy > *:nth-child(4) {
+  --tm-i: 3;
+}
+
+.tm-reveal .tm-project:nth-child(1),
+.tm-reveal .tm-feature:nth-child(1),
+.tm-reveal .tm-experience-features > li:nth-child(1) {
+  --tm-i: 2;
+}
+
+.tm-reveal .tm-project:nth-child(2),
+.tm-reveal .tm-feature:nth-child(2),
+.tm-reveal .tm-experience-features > li:nth-child(2) {
+  --tm-i: 3;
+}
+
+.tm-reveal .tm-project:nth-child(3),
+.tm-reveal .tm-feature:nth-child(3),
+.tm-reveal .tm-experience-features > li:nth-child(3) {
+  --tm-i: 4;
+}
+
+.tm-reveal .tm-feature:nth-child(4) {
+  --tm-i: 5;
 }
 
 .tm-panel,
@@ -262,6 +349,7 @@
 .tm-outline-button:hover {
   color: #fff;
   background: var(--tm-blue);
+  box-shadow: 0 calc(var(--u) * 8) calc(var(--u) * 18) rgba(16, 44, 72, 0.26);
 }
 
 .tm-yellow-button {
@@ -276,6 +364,11 @@
 .tm-yellow-button:hover {
   background: var(--tm-yellow-2);
   transform: translateY(-1px);
+  /* The yellow is the page's one accent; letting it bloom on hover is the
+     cheapest way to make the primary action feel like the primary action. */
+  box-shadow:
+    0 calc(var(--u) * 10) calc(var(--u) * 24) rgba(255, 196, 0, 0.5),
+    0 0 calc(var(--u) * 10) rgba(255, 196, 0, 0.35);
 }
 
 .tm-round-button {
@@ -339,8 +432,8 @@
 }
 
 .tm-project:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 calc(var(--u) * 16) calc(var(--u) * 32) rgba(38, 92, 150, 0.24);
+  transform: translateY(-7px);
+  box-shadow: 0 calc(var(--u) * 22) calc(var(--u) * 40) rgba(38, 92, 150, 0.3);
 }
 
 .tm-project-photo {
@@ -710,6 +803,24 @@
   left: calc(var(--u) * 248);
   width: calc(var(--u) * 310);
   height: calc(var(--u) * 172);
+}
+
+/* StoriesOfTrust keys the card on the index, so each arrow press remounts it and
+   replays this. Dormant until a second testimonial is added — with one entry the
+   arrows are disabled and it only ever runs on first reveal. */
+@keyframes tm-quote-in {
+  from {
+    opacity: 0;
+    translate: calc(var(--u) * 24) 0;
+  }
+  to {
+    opacity: 1;
+    translate: none;
+  }
+}
+
+.tm-quote-slot > * {
+  animation: tm-quote-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .tm-quote {
@@ -1502,6 +1613,20 @@
     opacity: 1;
     transform: none;
     transition: none;
+  }
+
+  /* Everything the staggered entry touches shows immediately. The `opacity: 0`
+     start state has to be undone explicitly — without this the cards would
+     simply never appear, since no animation runs to bring them back. */
+  .tm-reveal .tm-intro > *,
+  .tm-reveal .tm-experience-copy > *,
+  .tm-reveal .tm-project,
+  .tm-reveal .tm-feature,
+  .tm-reveal .tm-experience-features > li,
+  .tm-quote-slot > * {
+    opacity: 1;
+    translate: none;
+    animation: none;
   }
 
   .tm-project,

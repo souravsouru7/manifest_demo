@@ -1,0 +1,195 @@
+/* Floating contact channels and back-to-top, bottom right on every page. */
+
+.fa-root {
+  position: fixed;
+  /* Above the sections, below the navbar (50) and the hero's video lightbox
+     (70) — the lightbox is meant to cover these, not sit under them. */
+  z-index: 40;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: calc(env(safe-area-inset-bottom) + 1.25rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.65rem;
+}
+
+.fa-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.fa-button:hover {
+  transform: translateY(-2px);
+}
+
+.fa-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+/* ---------- Back to top ---------- */
+.fa-top {
+  color: #071b2c;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 22px rgba(7, 27, 44, 0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Hidden by default: it only earns its place once there is something to go back
+   up from. `visibility` rather than `display` so the fade can play out, and so
+   the row below it does not jump when it arrives. */
+.fa-top[data-shown="false"] {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  pointer-events: none;
+}
+
+.fa-top:hover {
+  background: #fff;
+}
+
+/* ---------- Contact channels ---------- */
+.fa-channels {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fa-channel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.55rem 0.5rem 1rem;
+  border-radius: 999px;
+  color: #071b2c;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 22px rgba(7, 27, 44, 0.26);
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+  /* Arrive on load rather than popping in, bottom pill first. */
+  animation: fa-channel-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fa-channel-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+    scale: 0.92;
+  }
+  to {
+    opacity: 1;
+    translate: none;
+    scale: 1;
+  }
+}
+
+.fa-channels li:nth-child(3) .fa-channel {
+  animation-delay: 0.45s;
+}
+
+.fa-channels li:nth-child(2) .fa-channel {
+  animation-delay: 0.52s;
+}
+
+.fa-channels li:nth-child(1) .fa-channel {
+  animation-delay: 0.59s;
+}
+
+.fa-channel:hover {
+  transform: translateY(-2px);
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(7, 27, 44, 0.32);
+}
+
+.fa-channel:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.fa-channel-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.fa-channel-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  color: #071b2c;
+  background: var(--seq-yellow);
+}
+
+/* WhatsApp gets its own colour; the other two stay on the brand yellow. */
+.fa-channel-whatsapp .fa-channel-icon {
+  color: #fff;
+  background: #25d366;
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 767px) {
+  .fa-root {
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: calc(env(safe-area-inset-bottom) + 1rem);
+    gap: 0.5rem;
+  }
+
+  .fa-button {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  /* Labels cost more width than they are worth next to a thumb; the icons
+     carry it, with the accessible name left on the link. */
+  .fa-channel-label {
+    display: none;
+  }
+
+  .fa-channel {
+    padding: 0.35rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fa-button,
+  .fa-channel {
+    transition: none;
+    animation: none;
+  }
+
+  .fa-button:hover,
+  .fa-channel:hover {
+    transform: none;
+  }
+
+  .fa-top[data-shown="false"] {
+    transform: none;
+  }
+}

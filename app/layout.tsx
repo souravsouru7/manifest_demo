@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 
+import FloatingActions from "@/components/ui/FloatingActions";
 import "./globals.css";
 
 // One typeface for the whole page, hero and sections alike.
@@ -13,8 +14,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "We Build Your Vision | Architecture & Construction",
-  description: "From empty land to iconic structures — crafted with precision.",
+  title: "TM Manifesto | A New Way Of Living",
+  description: "Thoughtfully designed spaces that bring nature closer to you.",
 };
 
 export const viewport: Viewport = {
@@ -26,7 +27,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={poppins.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <FloatingActions />
+      </body>
     </html>
   );
 }

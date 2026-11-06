@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  /* Sampled from the top row of the sky image. The hero's sky wipe ends on this
-     colour and the sections begin on it, so there is no line between them. */
+  /* Sampled from the top row of the sky image. The hero's skirt fades down to
+     this colour and the sections begin on it, so there is no line between them. */
   --hero-next-bg: #4696dd;
   --seq-navy: #071b2c;
   --seq-yellow: #ffc400;
@@ -10,9 +10,17 @@
 
 html {
   background: var(--seq-navy);
-  /* Stops pull-to-refresh and rubber-banding from interrupting the scrub */
   overscroll-behavior-y: none;
   -webkit-text-size-adjust: 100%;
+  /* Anchor links and the back-to-top button. Lenis used to smooth these and
+     left with the old scroll hero, so the browser handles it now. */
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -37,18 +45,6 @@ body {
   font-size: clamp(2.5rem, min(6.6vw, 13.5svh), 6.6rem);
   line-height: 1.04;
   text-shadow: 0 2px 30px rgb(7 27 44 / 0.35);
-}
-
-.seq-beat-title {
-  font-size: clamp(1.9rem, min(3.9vw, 10svh), 3.8rem);
-  line-height: 1.1;
-  text-shadow: 0 2px 26px rgb(7 27 44 / 0.4);
-}
-
-.seq-beat-title-lg {
-  font-size: clamp(2rem, min(4.4vw, 10.5svh), 4.4rem);
-  line-height: 1.08;
-  text-shadow: 0 2px 26px rgb(7 27 44 / 0.4);
 }
 
 .seq-lede {
@@ -80,8 +76,10 @@ body {
   background: var(--seq-yellow);
 }
 
+/* Nav links and buttons. Sized to the design, where they carry noticeably more
+   weight than a default 14px control. */
 .seq-label {
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: -0.01em;
 }
@@ -96,48 +94,13 @@ body {
   padding-right: max(3rem, env(safe-area-inset-right));
 }
 
-.seq-hero-copy {
-  padding-bottom: calc(env(safe-area-inset-bottom) + 9rem);
-}
-
-.seq-beat-copy {
-  padding-bottom: calc(env(safe-area-inset-bottom) + 5rem);
-}
-
-.seq-indicator {
-  bottom: calc(env(safe-area-inset-bottom) + 1.5rem);
-}
-
-/* Frame 1, shown instantly. Same crop as the canvas (see FOCUS_X). */
-.seq-first-frame {
-  background-image: var(--seq-first);
-  background-position: 42% 50%;
-  background-size: cover;
-}
-
-@media (max-width: 767px), (pointer: coarse) {
-  .seq-first-frame {
-    background-image: var(--seq-first-light);
+/* The design holds its content well clear of the edge; at 48px the logo and the
+   stats bar sit closer to the frame than anything else in the composition. */
+@media (min-width: 1280px) {
+  .seq-gutter {
+    padding-left: max(5rem, env(safe-area-inset-left));
+    padding-right: max(5rem, env(safe-area-inset-right));
   }
-}
-
-/* The sky rising over the finished home: clear, then soft mist, then solid sky.
-   Starts below the hero and is moved up by the scroll timeline. */
-.seq-sky-wipe {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: 0;
-  height: 180%;
-  background: linear-gradient(
-    180deg,
-    rgb(232 243 255 / 0) 0,
-    rgb(232 243 255 / 0.5) 12%,
-    rgb(190 222 250 / 0.85) 24%,
-    var(--hero-next-bg) 42%
-  );
-  pointer-events: none;
-  will-change: transform; /* Its own GPU layer: the gradient is painted once, then only moved */
 }
 
 /* Phones */
@@ -145,14 +108,6 @@ body {
   .seq-gutter {
     padding-left: max(1.5rem, env(safe-area-inset-left));
     padding-right: max(1.5rem, env(safe-area-inset-right));
-  }
-
-  .seq-hero-copy {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 7.5rem);
-  }
-
-  .seq-beat-copy {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 3rem);
   }
 
   .seq-eyebrow {
@@ -171,14 +126,6 @@ body {
 
 /* Short screens, mainly landscape phones: everything has to fit in very little height */
 @media (max-height: 560px) {
-  .seq-hero-copy {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 1.25rem);
-  }
-
-  .seq-beat-copy {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 1.25rem);
-  }
-
   /* One line here: two lines of headline would crowd out the buttons */
   .seq-headline-break {
     display: none;
@@ -197,10 +144,6 @@ body {
 
   .seq-actions > a {
     min-height: 2.75rem;
-  }
-
-  .seq-indicator {
-    display: none;
   }
 }
 
@@ -279,7 +222,7 @@ body {
 
 /* ---------- Motion ---------- */
 /* Entrance: runs from CSS so it plays before hydration, and on inner elements
-   so it never competes with the scroll timeline, which moves the outer wrapper. */
+   so each one can carry its own delay. */
 @keyframes seq-rise {
   from {
     opacity: 0;
@@ -302,41 +245,8 @@ body {
   animation-play-state: running;
 }
 
-/* Scroll indicator: a light travelling down a thin line */
-.seq-scroll-line {
-  position: relative;
-  width: 1px;
-  height: 40px;
-  overflow: hidden;
-  background: rgb(255 255 255 / 0.25);
-}
-
-.seq-scroll-line::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: #fff;
-  animation: seq-scroll-line 1.9s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-}
-
-@keyframes seq-scroll-line {
-  from {
-    transform: translateY(-100%);
-  }
-  to {
-    transform: translateY(100%);
-  }
-}
-
-/* Beats start hidden; the scroll timeline reveals them */
-.seq-caption {
-  opacity: 0;
-  visibility: hidden;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .seq-rise,
-  .seq-scroll-line::after {
+  .seq-rise {
     animation: none;
   }
 }
