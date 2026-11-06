@@ -1,7 +1,6 @@
-import Image from "next/image";
-
 import FeaturedDevelopments from "./FeaturedDevelopments";
 import Footer from "./Footer";
+import SkyBackdrop from "./SkyBackdrop";
 import StoriesOfTrust from "./StoriesOfTrust";
 import TMExperience from "./TMExperience";
 import WhyChooseTM from "./WhyChooseTM";
@@ -10,18 +9,14 @@ import "./sections.css";
 export default function LandingSections() {
   return (
     <div className="tm-root">
+      {/* Nothing adds .is-shown without JavaScript, so both the panel and the
+          contents the staggered entry starts at opacity:0 have to be forced back. */}
       <noscript>
-        <style>{`.tm-reveal{opacity:1;transform:none}`}</style>
+        <style>{`.tm-reveal{opacity:1;transform:none}.tm-reveal .tm-intro>*,.tm-reveal .tm-experience-copy>*,.tm-reveal .tm-project,.tm-reveal .tm-feature,.tm-reveal .tm-experience-features>li{opacity:1;translate:none;animation:none}`}</style>
       </noscript>
 
-      {/* Continuous sky behind every section */}
-      <div aria-hidden className="tm-sky">
-        <Image loading="eager" src="/tm/01-background-sky-mountains.png" alt="" width={1024} height={190} className="tm-sky-top" />
-        <Image loading="eager" src="/tm/01-background-sky-mountains.png" alt="" width={1024} height={190} className="tm-sky-mid" />
-        <Image loading="eager" src="/tm/01-background-sky-mountains.png" alt="" width={1024} height={190} className="tm-sky-low" />
-      </div>
-      <Image loading="eager" src="/tm/09-leaf-overlay-top-left.png" alt="" width={190} height={190} className="tm-leaf tm-leaf-top" />
-      <Image loading="eager" src="/tm/11-leaf-overlay-lower-left.png" alt="" width={170} height={260} className="tm-leaf tm-leaf-lower" />
+      {/* Continuous sky and leaves behind every section, drifting on scroll */}
+      <SkyBackdrop />
 
       <div className="tm-sections">
         <FeaturedDevelopments />

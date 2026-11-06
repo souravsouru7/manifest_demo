@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-import { LOGO_SRC } from "@/components/hero/Navbar";
+import { LOGO_SRC } from "@/components/hero/HeroVideoNav";
 
 type LoaderProps = {
   /** 0..1 */
@@ -15,7 +15,7 @@ type LoaderProps = {
  * Opening screen. The logo fills with yellow as the page loads, then the two
  * navy panels slide apart to reveal the hero. Everything moves with transforms
  * and opacity only. Hidden for reduced motion, and without JavaScript by the
- * noscript style in HeroSequence.
+ * noscript style in HeroVideo.
  */
 export default function Loader({ progress, open }: LoaderProps) {
   const percent = Math.round(progress * 100);
