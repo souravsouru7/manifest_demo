@@ -89,8 +89,12 @@ export default function HeroVideo() {
   const ready = (loaded && minTimeDone) || timedOut;
 
   useEffect(() => {
-    const minTimer = setTimeout(() => setMinTimeDone(true), LOADER_MIN_MS);
-    const timeoutTimer = setTimeout(() => setTimedOut(true), LOADER_TIMEOUT_MS);
+    // Both clocks run from when the page started loading, not from when this
+    // effect runs: the loader has already been on screen since the HTML arrived,
+    // so starting them here added the JS download time on top of the minimum.
+    const elapsed = performance.now();
+    const minTimer = setTimeout(() => setMinTimeDone(true), Math.max(0, LOADER_MIN_MS - elapsed));
+    const timeoutTimer = setTimeout(() => setTimedOut(true), Math.max(0, LOADER_TIMEOUT_MS - elapsed));
     return () => {
       clearTimeout(minTimer);
       clearTimeout(timeoutTimer);

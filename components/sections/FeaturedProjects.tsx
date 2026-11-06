@@ -138,7 +138,7 @@ export default function FeaturedProjects() {
 
         <div className="tm-projects-rail">
           <ul ref={track} className="tm-projects-track" aria-label="Featured projects" tabIndex={0}>
-            {PROJECTS.map((project, i) => (
+            {PROJECTS.map((project) => (
               <li key={project.name} className={`tm-project tm-project-${project.size}`}>
                 <a href="#contact" className="tm-project-link" aria-label={`${project.name}, ${project.location}. Enquire about this project`}>
                   <span aria-hidden className="tm-project-sky" />
@@ -157,7 +157,6 @@ export default function FeaturedProjects() {
                     height={project.h}
                     sizes={project.size === "lg" ? "(max-width: 768px) 82vw, 44vw" : "(max-width: 768px) 70vw, 26vw"}
                     className="tm-project-house"
-                    loading={i === 0 ? "eager" : "lazy"}
                   />
                   <span aria-hidden className="tm-project-shade" />
                   <span className="tm-project-meta">

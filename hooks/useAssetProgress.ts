@@ -14,8 +14,14 @@ export function useAssetProgress() {
   useEffect(() => {
     let cancelled = false;
 
-    // Images hidden on this screen size (display: none) aren't waited for.
-    const tracked = [...document.images].filter((image) => getComputedStyle(image).display !== "none");
+    // Only what the first screen is made of is waited for. Lazy images (every
+    // section below the hero) don't start downloading until they are scrolled
+    // near, and scrolling is locked while the loader is up, so waiting on them
+    // stalled the loader until its timeout. Images hidden on this screen size
+    // (display: none) aren't waited for either.
+    const tracked = [...document.images].filter(
+      (image) => image.loading !== "lazy" && getComputedStyle(image).display !== "none",
+    );
     const update = () => {
       if (cancelled) return;
       const finished = tracked.filter((image) => image.complete).length;
