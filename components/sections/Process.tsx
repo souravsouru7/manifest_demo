@@ -22,8 +22,8 @@ const STEPS = [
  *
  * Desktop: one scrubbed timeline. The gold journey line draws across and each
  * rock rises as the line reaches it, with the foreground plants moving faster
- * than the stream behind them. Mobile: the rocks form a zig-zag column joined by
- * a vertical gold line, and each one rises as it enters the viewport.
+ * than the stream behind them. Mobile: a vertical timeline of glass cards, each
+ * with a rock thumbnail, its icon sitting on a gold line that draws on scroll.
  */
 export default function Process() {
   const root = useRef<HTMLElement>(null);
@@ -61,15 +61,10 @@ export default function Process() {
           ease: "none",
           scrollTrigger: { trigger: ".tm-steps", start: "top 75%", end: "bottom 70%", scrub: true },
         });
-        gsap.utils.toArray<HTMLElement>(".tm-step").forEach((step, i) => {
-          gsap.from(step, {
-            y: 50,
-            x: i % 2 ? 30 : -30,
-            autoAlpha: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: { trigger: step, start: "top 88%" },
-          });
+        gsap.utils.toArray<HTMLElement>(".tm-step").forEach((step) => {
+          const tl = gsap.timeline({ scrollTrigger: { trigger: step, start: "top 88%" } });
+          tl.from(step, { x: 24, y: 30, autoAlpha: 0, duration: 0.9, ease: "power3.out" });
+          tl.from(step.querySelector(".tm-step-icon"), { scale: 0, duration: 0.5, ease: "back.out(3)" }, 0.25);
         });
       });
     },
@@ -110,7 +105,11 @@ export default function Process() {
           <ol>
             {STEPS.map(({ n, title, copy, icon: Icon, src, w, h }) => (
               <li key={n} className="tm-step">
-                <Image src={src} alt="" width={w} height={h} sizes="(max-width: 899px) 70vw, 20vw" className="tm-step-rock" />
+                <Image src={src} alt="" width={w} height={h} sizes="(max-width: 899px) 1px, 20vw" className="tm-step-rock" />
+                <span aria-hidden className="tm-step-badge">
+                  <small>Step</small>
+                  {n}
+                </span>
                 <div className="tm-step-body">
                   <span aria-hidden className="tm-step-icon">
                     <Icon />

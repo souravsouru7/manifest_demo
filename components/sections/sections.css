@@ -1223,8 +1223,247 @@
   transform-origin: 50% 0;
 }
 
-.tm-proc-path {
+.tm-proc-path,
+.tm-step-badge {
   display: none;
+}
+
+/* Mobile: a vertical timeline of glass cards. The gold line runs down the
+   left, each icon sits on it as a node, and the rock becomes a thumbnail so
+   the label reads on a calm surface instead of the moss. */
+@media (max-width: 899px) {
+  .tm-steps ol {
+    padding-left: 3.25rem;
+    gap: 1rem;
+  }
+
+  .tm-steps-line {
+    top: 2rem;
+    bottom: 2rem;
+    left: calc(1.3rem - 1px);
+  }
+
+  .tm-step,
+  .tm-step:nth-child(odd),
+  .tm-step:nth-child(even) {
+    align-self: stretch;
+    width: 100%;
+  }
+
+  .tm-step {
+    display: grid;
+    grid-template-columns: 4.25rem 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: 1rem;
+    background: rgb(8 43 69 / 0.55);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 14px 30px rgb(0 0 0 / 0.28);
+  }
+
+  .tm-step-rock {
+    display: none;
+  }
+
+  /* A gold-edged tile with the step number replaces the rock. */
+  .tm-step-badge {
+    position: relative;
+    grid-column: 1;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    aspect-ratio: 1;
+    border-radius: 0.9rem;
+    background:
+      linear-gradient(rgb(8 43 69 / 0.95), rgb(8 43 69 / 0.95)) padding-box,
+      linear-gradient(140deg, var(--tm-yellow), rgb(255 196 0 / 0.1) 60%, rgb(255 196 0 / 0.6)) border-box;
+    border: 1.5px solid transparent;
+    box-shadow: inset 0 0 18px rgb(255 196 0 / 0.12);
+    font-size: 1.7rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--tm-yellow);
+    text-shadow: 0 0 14px rgb(255 196 0 / 0.45);
+  }
+
+  .tm-step-badge small {
+    margin-bottom: 0.2rem;
+    font-size: 0.55rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.55);
+  }
+
+  /* Soft gold glow sweeping across the card's left edge. */
+  .tm-step::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 40%;
+    background: radial-gradient(60% 70% at 0% 50%, rgb(255 196 0 / 0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .tm-step-n {
+    display: none;
+  }
+
+  .tm-step-body {
+    display: contents;
+  }
+
+  .tm-step-body::before {
+    display: none;
+  }
+
+  .tm-step-icon {
+    position: absolute;
+    left: -3.25rem;
+    top: calc(50% - 1.3rem);
+    background: var(--tm-navy);
+    box-shadow:
+      0 0 0 4px rgb(8 43 69 / 0.9),
+      0 0 18px rgb(255 196 0 / 0.45);
+  }
+
+  .tm-step-text {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .tm-step h3 {
+    font-size: 1.05rem;
+    text-shadow: none;
+  }
+
+  .tm-step p {
+    font-size: 0.85rem;
+    text-shadow: none;
+    color: rgb(255 255 255 / 0.8);
+  }
+}
+
+/* Mobile only: keep the timeline alive — a spinning gold edge on each number
+   tile, a breathing glow on the number, sonar rings on the icon nodes, a
+   light sweep across each card and a spark that travels down the line. */
+@media (max-width: 899px) and (prefers-reduced-motion: no-preference) {
+  .tm-step-badge {
+    isolation: isolate;
+    overflow: hidden;
+    border: 0;
+    background: none;
+    animation: tm-badge-glow 2.8s ease-in-out infinite;
+  }
+
+  .tm-step-badge::before {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    z-index: -2;
+    background: conic-gradient(from 0deg, transparent 0 55%, rgb(255 196 0 / 0.25) 70%, var(--tm-yellow) 85%, transparent 100%);
+    animation: tm-spin 3.2s linear infinite;
+  }
+
+  .tm-step-badge::after {
+    content: "";
+    position: absolute;
+    inset: 1.5px;
+    z-index: -1;
+    border-radius: calc(0.9rem - 1.5px);
+    background:
+      radial-gradient(80% 80% at 50% 120%, rgb(255 196 0 / 0.18), transparent 70%),
+      var(--tm-navy);
+  }
+
+  .tm-step-icon::after {
+    content: "";
+    position: absolute;
+    inset: -1.5px;
+    border: 1.5px solid var(--tm-yellow);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: tm-sonar 2.4s ease-out infinite;
+  }
+
+  .tm-step::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.09) 50%, transparent 65%);
+    transform: translateX(-120%);
+    pointer-events: none;
+    animation: tm-sweep 5s ease-in-out infinite;
+  }
+
+  .tm-step::before {
+    animation: tm-breathe 3.5s ease-in-out infinite;
+  }
+
+  /* Stagger each step so they don't pulse in lockstep. */
+  .tm-step:nth-child(2) > *,
+  .tm-step:nth-child(2)::before,
+  .tm-step:nth-child(2)::after { animation-delay: 0.6s; }
+  .tm-step:nth-child(3)::before,
+  .tm-step:nth-child(3)::after { animation-delay: 1.2s; }
+  .tm-step:nth-child(4)::before,
+  .tm-step:nth-child(4)::after { animation-delay: 1.8s; }
+  .tm-step:nth-child(2) .tm-step-icon::after { animation-delay: 0.6s; }
+  .tm-step:nth-child(3) .tm-step-icon::after { animation-delay: 1.2s; }
+  .tm-step:nth-child(4) .tm-step-icon::after { animation-delay: 1.8s; }
+  .tm-step:nth-child(2) .tm-step-badge::before { animation-delay: -0.8s; }
+  .tm-step:nth-child(3) .tm-step-badge::before { animation-delay: -1.6s; }
+  .tm-step:nth-child(4) .tm-step-badge::before { animation-delay: -2.4s; }
+
+  .tm-steps-line::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 8px;
+    height: 8px;
+    margin-left: -4px;
+    border-radius: 50%;
+    background: #fff6cc;
+    box-shadow: 0 0 10px 3px var(--tm-yellow);
+    animation: tm-spark 4s ease-in-out infinite;
+  }
+}
+
+@keyframes tm-spin {
+  to { transform: rotate(1turn); }
+}
+
+@keyframes tm-badge-glow {
+  0%, 100% { text-shadow: 0 0 10px rgb(255 196 0 / 0.3); }
+  50% { text-shadow: 0 0 20px rgb(255 196 0 / 0.85); }
+}
+
+@keyframes tm-sonar {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+@keyframes tm-sweep {
+  0%, 55% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+
+@keyframes tm-breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes tm-spark {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
 }
 
 @media (min-width: 900px) {
